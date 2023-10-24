@@ -76,7 +76,7 @@ def checkWin():
 	if len(mines) != len(flags):
 		return False
 	for flag in flags:
-		if !mineAtLocation(x,y):
+		if not mineAtLocation(x,y):
 			return False
 	return True
 
@@ -96,7 +96,7 @@ b.cell_color = "white"
 b.fill("cover")
 
 generateMines()
-#generateNumbers()
+generateNumbers()
 
 b.on_mouse_click = handleClick
 b.show()
