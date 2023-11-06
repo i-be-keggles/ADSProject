@@ -1,5 +1,7 @@
 from game2dboard import Board
 import random
+import minegen as mg
+from util import Coords
 
 size = 10
 cellSize = 25
@@ -10,11 +12,6 @@ flags = []
 mines = []
 b = None
 
-
-class Coords:
-	def __init__(self, x, y):
-		self.x = x
-		self.y = y
 
 
 def handleClick(btn, row, col):
@@ -42,18 +39,6 @@ def mineAtLocation(x, y):
 		if mine.x == x and mine.y == y:
 			return True
 	return False
-
-
-#TODO: convert to poisson disc sampling
-def generateMines():
-	for i in range(numMines):
-		x = y = -1
-		while(x == -1 or mineAtLocation(x,y)):
-			x = random.randint(0, size - 1)
-			y = random.randint(0, size - 1)
-		mines.append(Coords(x,y))
-		b[y][x] == "mine"
-	return mines
 
 
 def minesInRange(x, y):
@@ -95,7 +80,8 @@ b.cell_color = "white"
 
 b.fill("cover")
 
-generateMines()
+mines = mg.generateMines(b, numMines, size, mineAtLocation)
+#mines = mg.generateMinesPoisson(b, numMines)
 generateNumbers()
 
 b.on_mouse_click = handleClick
