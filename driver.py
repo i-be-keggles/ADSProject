@@ -80,8 +80,8 @@ b.cell_color = "white"
 
 b.fill("cover")
 
-mines = mg.generateMines(b, numMines, size, mineAtLocation)
-#mines = mg.generateMinesPoisson(b, numMines)
+#mines = mg.generateMines(b, numMines, size, mineAtLocation)
+mines = mg.generateMinesPoisson(b, numMines)
 generateNumbers()
 
 b.on_mouse_click = handleClick
