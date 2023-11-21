@@ -28,6 +28,9 @@ def handleClick(btn, row, col):
 			b[row][col] = "cover"
 			flags.remove(Coords(row,col))
 		else:
+			if(len(flags) == len(mines)):
+				print("No more flags.")
+				return
 			b[row][col] = "flag"
 			flags.append(Coords(row,col))
 		if checkWin():
@@ -58,12 +61,16 @@ def generateNumbers():
 
 
 def checkWin():
+	print(len(flags),"out of", len(mines), "flags.")
 	if len(mines) != len(flags):
-		print(len(flags),"out of", len(mines), "flags.")
 		return False
+	for y in range(0, size):
+		for x in range(0, size):
+			if b[y][x] == "cover":
+				print("Clear all tiles to win.")
+				return False
 	for flag in flags:
 		if not mineAtLocation(flag.y, flag.x):
-			print("Misplaced flag at", flag.x, flag.y)
 			return False
 	return True
 
