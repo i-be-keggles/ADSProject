@@ -74,9 +74,11 @@ def checkWin():
 	print(len(flags),"out of", len(mines), "flags.")
 	#check if all flags have been placed
 	if len(mines) != len(flags):
-		print(len(flags),"out of", len(mines), "flags.")
 		return False
+<<<<<<< HEAD
 	#check if all tiles have been cleared
+=======
+>>>>>>> 1fead01 (flag logic update & win condition tweak)
 	for y in range(0, size):
 		for x in range(0, size):
 			if b[y][x] == "cover":
