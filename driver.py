@@ -74,6 +74,7 @@ def checkWin():
 	print(len(flags),"out of", len(mines), "flags.")
 	#check if all flags have been placed
 	if len(mines) != len(flags):
+		print(len(flags),"out of", len(mines), "flags.")
 		return False
 	#check if all tiles have been cleared
 	for y in range(0, size):
@@ -87,6 +88,14 @@ def checkWin():
 			return False
 	return True
 
+#depth first search floodfill
+def clearTiles(x,y):
+	if x < 0 or y < 0 or x >= size or y >= size or b[y][x] == None:
+		return
+	m = minesInRange(x,y)
+	if m != 0:
+		b[y][x] = m
+		return
 
 #depth first search floodfill
 def clearTiles(x,y):
@@ -108,7 +117,6 @@ def clearTiles(x,y):
 	clearTiles(x - 1, y)
 	clearTiles(x, y + 1)
 	clearTiles(x, y - 1)
-
 
 #initialise game
 b = Board(size, size)
