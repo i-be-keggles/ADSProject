@@ -75,10 +75,7 @@ def checkWin():
 	#check if all flags have been placed
 	if len(mines) != len(flags):
 		return False
-<<<<<<< HEAD
 	#check if all tiles have been cleared
-=======
->>>>>>> 1fead01 (flag logic update & win condition tweak)
 	for y in range(0, size):
 		for x in range(0, size):
 			if b[y][x] == "cover":
@@ -98,6 +95,7 @@ def clearTiles(x,y):
 	if m != 0:
 		b[y][x] = m
 		return
+
 
 #depth first search floodfill
 def clearTiles(x,y):
