@@ -1,12 +1,12 @@
 from game2dboard import Board
-import random
 import minegen as mg
-from util import Coords
+from util import *
 
 size = 10
 cellSize = 25
 
 numMines = 7
+mineSpacing = 2
 
 flags = []
 mines = []
@@ -20,7 +20,7 @@ def handleClick(btn, row, col):
 		return
 	#try clearing
 	if btn == 1 and b[row][col] != "flag":
-		if mineAtLocation(col, row):
+		if mineAtLocation(col, row, mines):
 			b[row][col] = "mine"
 			print("You lose!")
 		else:
@@ -43,30 +43,12 @@ def handleClick(btn, row, col):
 		print("You win!")
 
 
-#check if there is a mine on given tile
-def mineAtLocation(x, y):
-	for mine in mines:
-		if mine.x == x and mine.y == y:
-			return True
-	return False
-
-
-#calculate the numbers of mines within 1 tile of position
-def minesInRange(x, y):
-	n = 0
-	for dx in range(max(0, x-1), min(size, x+2)):
-		for dy in range(max(0, y-1), min(size, y+2)):
-			if mineAtLocation(dx, dy):
-				n += 1
-	return n
-
-
 #debug function - displays neighbouring mines for each tile
 def generateNumbers():
 	for y in range(0, size):
 		for x in range(0, size):
-			if not mineAtLocation(x,y) and minesInRange(x,y) != 0:
-				b[y][x] = minesInRange(x,y)
+			if not mineAtLocation(x,y, mines) and minesNextTo(x,y, mines) != 0:
+				b[y][x] = minesNextTo(x,y, mines, size)
 
 
 #checks for win condition (all mines must be flagged with no other covered spaces)
@@ -83,18 +65,9 @@ def checkWin():
 				return False
 	#check that flags are correct
 	for flag in flags:
-		if not mineAtLocation(flag.y, flag.x):
+		if not mineAtLocation(flag.y, flag.x, mines):
 			return False
 	return True
-
-#depth first search floodfill
-def clearTiles(x,y):
-	if x < 0 or y < 0 or x >= size or y >= size or b[y][x] == None:
-		return
-	m = minesInRange(x,y)
-	if m != 0:
-		b[y][x] = m
-		return
 
 
 #depth first search floodfill
@@ -104,7 +77,7 @@ def clearTiles(x,y):
 		return
 
 	#calculate and display neighbouring mines
-	m = minesInRange(x,y)
+	m = minesNextTo(x,y, mines, size)
 	if m != 0:
 		b[y][x] = m
 		return
@@ -125,11 +98,11 @@ b.title = "MineSweeper"
 b.cell_size = cellSize       
 b.cell_color = "white"
 
-b.fill("cover")
-
-mines = mg.generateMines(b, numMines, size, mineAtLocation)
-#mines = mg.generateMinesPoisson(b, numMines)
+#mines = mg.generateMines(b, numMines, size, mineAtLocation)
+mines = mg.generateMinesPoisson(b, mineSpacing)
 #generateNumbers()
+
+b.fill("cover")
 
 b.on_mouse_click = handleClick
 b.show()
