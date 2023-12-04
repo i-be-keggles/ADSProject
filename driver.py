@@ -1,4 +1,9 @@
 from game2dboard import Board
+
+from data_structures import BoardGraph
+from algorithms import *
+from scoreboard import *
+
 import minegen as mg
 from util import *
 import time
@@ -16,7 +21,7 @@ b = None
 scoreboard_path = "scoreboard.txt"
 
 
-#user interaction logic
+#	user interaction logic
 def handleClick(btn, row, col):
 	#check for blank space
 	if b[row][col] != "cover" and b[row][col] != "flag":
@@ -76,87 +81,31 @@ def checkWin():
 
 
 #depth first search floodfill
-def clearTiles(x,y):
-	#base case
-	if x < 0 or y < 0 or x >= size or y >= size or b[y][x] == None:
+def clearTiles(x, y):
+	node = b.get_node(x, y)
+	# Base case
+	if node is None or node.value == None:
 		return
 
-	#calculate and display neighbouring mines
-	m = minesNextTo(x,y, mines, size)
+	# Calculate and display neighbouring mines
+	m = minesNextTo(x, y, mines, size)
 	if m != 0:
-		b[y][x] = m
+		node.value = m
 		return
 
-	#clear if 0
-	b[y][x] = None
+	# Clear if 0
+	node.value = None
 
-	#recurse
-	clearTiles(x + 1, y)
-	clearTiles(x - 1, y)
-	clearTiles(x, y + 1)
-	clearTiles(x, y - 1)
-
-
-def get_scoreboard(path):
-	try:
-		with open(path, "r") as f:
-			return f.readlines()
-	except FileNotFoundError:
-		return ""
-
-
-def update_scoreboard(scoreboard_file, time, difficulty):
-	try:
-		with open(scoreboard_file, 'r') as f:
-			content = f.read()
-	except FileNotFoundError:
-		content = "===EASY===\n\n===MEDIUM===\n\n===HARD===\n"
-
-	sections = {"EASY": [], "MEDIUM": [], "HARD": []}
-	current_section = None
-
-	for line in content.split('\n'):
-		if line.startswith("==="):
-			current_section = line.strip("= \n")
-		elif line and current_section:
-			sections[current_section].append(line.split(') ')[1])
-
-	sections[difficulty].append(format_time(time))
-	sorted_times = quicksort(sections[difficulty])
-
-	new_content = ""
-	for diff in ["EASY", "MEDIUM", "HARD"]:
-		new_content += f"==={diff}===\n" + format_section(sorted_times if diff == difficulty else sections[diff]) + "\n"
-
-	with open(scoreboard_file, 'w') as f:
-		f.write(new_content.strip())
-
-
-def format_time(time):
-	minutes, seconds = divmod(time, 60)
-	seconds, milliseconds = divmod(seconds, 1)
-	return f"{int(minutes):02d}:{int(seconds):02d}.{int(milliseconds * 100):02d}"
-
-
-def format_section(times):
-	return '\n'.join(f"{i + 1}) {time}" for i, time in enumerate(times))
-
-
-def quicksort(times):
-	if len(times) <= 1:
-		return times
-	pivot = times[len(times) // 2]
-	left = [x for x in times if x < pivot]
-	middle = [x for x in times if x == pivot]
-	right = [x for x in times if x > pivot]
-	return quicksort(left) + middle + quicksort(right)
+	# Recurse through adjacent nodes
+	for adj_node in node.adjacent:
+		clearTiles(adj_node.x, adj_node.y)
 
 
 def main():
 	global b, flags, mines
 	#initialise game
+	b = BoardGraph(size)
 	b = Board(size, size)
-
 	b.title = "MineSweeper"
 	b.cell_size = cellSize
 	b.cell_color = "white"
