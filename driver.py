@@ -13,6 +13,7 @@ mines = []
 b = None
 
 
+#O(1) but may call functions with higher time complexity (eg. checkWin: up to O(n*m+p))
 #user interaction logic
 def handleClick(btn, row, col):
 	#check for blank space
@@ -23,6 +24,7 @@ def handleClick(btn, row, col):
 		if mineAtLocation(col, row, mines):
 			b[row][col] = "mine"
 			print("You lose!")
+			
 		else:
 			clearTiles(col, row);
 	#flag placement
@@ -43,6 +45,7 @@ def handleClick(btn, row, col):
 		print("You win!")
 
 
+#O(n*m) where n,m are dimensions
 #debug function - displays neighbouring mines for each tile
 def generateNumbers():
 	for y in range(0, size):
@@ -51,6 +54,7 @@ def generateNumbers():
 				b[y][x] = minesNextTo(x,y, mines, size)
 
 
+#best:O(1), worst:O(n*m+p) where n,m are dimensions, p is flags
 #checks for win condition (all mines must be flagged with no other covered spaces)
 def checkWin():
 	print(len(flags),"out of", len(mines), "flags.")
@@ -70,6 +74,7 @@ def checkWin():
 	return True
 
 
+#best:O(1), worst:O(n*m) where n,m are dimensions
 #depth first search floodfill
 def clearTiles(x,y):
 	#base case
@@ -90,6 +95,7 @@ def clearTiles(x,y):
 	clearTiles(x - 1, y)
 	clearTiles(x, y + 1)
 	clearTiles(x, y - 1)
+
 
 #initialise game
 b = Board(size, size)

@@ -1,5 +1,6 @@
 from util import *
 
+#O(n) where n is the number of generated mines
 #https://www.cs.ubc.ca/~rbridson/docs/bridson-siggraph07-poissondisk.pdf
 #generate mine positions with poisson disc sampling algorithm - bfs based
 def generateMinesPoisson(board, spacing, attempts = 20):
@@ -28,7 +29,8 @@ def generateMinesPoisson(board, spacing, attempts = 20):
     return mines
 
 
-#old solution
+#O(n) where n is the number of mines
+#generate mines randomly
 def generateMines(board, numMines, size, mineAtLocation):
     mines = []
     for i in range(numMines):

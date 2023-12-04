@@ -1,5 +1,6 @@
 import random
 
+#all O(1)
 #Basic xy coordinate definition
 class Coords:
     def __init__(self, x, y):
@@ -18,6 +19,7 @@ class Coords:
         return Coords(other.x + self.x, other.y + self.y)
 
 
+#O(1)
 #generates random offset with length clamps
 def randomMinMaxRange(min, max):
     #randomize quadrant
@@ -31,6 +33,7 @@ def randomMinMaxRange(min, max):
     return Coords(random.randint(min, max + 1) * nx, random.randint(min, max + 1) * ny)
 
 
+#best: O(1), worst: O(n^2) where n is 2*radius
 #calculate if there is a mine within r spaces of position
 def mineInRange(x, y, r, board):
     size = len(board)
@@ -41,6 +44,7 @@ def mineInRange(x, y, r, board):
     return False
 
 
+#O(1)
 #check if there is a mine on given tile
 def mineAtLocation(x, y, mines):
     for mine in mines:
@@ -49,6 +53,7 @@ def mineAtLocation(x, y, mines):
     return False
 
 
+#O(1)
 #calculate the numbers of mines within 1 tile of position
 def minesNextTo(x, y, mines, size):
     n = 0
