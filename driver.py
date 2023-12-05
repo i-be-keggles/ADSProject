@@ -22,21 +22,24 @@ start_time = time.time()
 mines = []
 
 
+# Function to place mines randomly on the board
 def place_mines():  # Average: O(n), Worst: O(n^2)
     global mines
     mines.clear()
 
+    # Randomly select and place mines, ensuring no duplicates
     while len(mines) < NUM_MINES:
         x, y = random.randint(0, SIZE - 1), random.randint(0, SIZE - 1)
         if (x, y) not in mines:
-            mines.append((x, y))
-            logical_board.get_node(x, y).value = 'mine'
+            mines.append((x, y))    # front end implementation
+            logical_board.get_node(x, y).value = 'mine'     # back end implementation
 
 
+# Handles mouse click events on the board
 def handleClick(btn, row, col):     # Average: O(1), Worst: O(1)
     node = logical_board.get_node(row, col)
 
-    if btn == 3:
+    if btn == 3:    # Right click: flag
         if visual_board[row][col] == 'cover':
             visual_board[row][col] = 'flag'
             node.value = 'flag'
@@ -45,26 +48,22 @@ def handleClick(btn, row, col):     # Average: O(1), Worst: O(1)
             node.value = 'cover'
         return
 
-    if btn == 1:
+    if btn == 1:     # Left click: uncover
         if node.value == 'cover':
             clearTiles(row, col)
             check_win_condition()
         elif node.value == 'mine':
             reveal_mines()
             print("Game Over! You hit a mine.")
+            visual_board.close()
 
 
-def reveal_mines():     # Average: O(n), Worst: O(n) where n is the number of cells
-    for x in range(SIZE):
-        for y in range(SIZE):
-            if logical_board.get_node(x, y).value == 'mine':
-                visual_board[x][y] = 'mine'
-
-
+# Recursively clears tiles without adjacent mines: FloodFill
 def clearTiles(x, y, visited=None):     # Average: O(n), Worst: O(n)
     if visited is None:
         visited = set()
 
+    # Base case checks for recursion
     if x < 0 or y < 0 or x >= SIZE or y >= SIZE:
         return
     if (x, y) in visited:
@@ -72,12 +71,14 @@ def clearTiles(x, y, visited=None):     # Average: O(n), Worst: O(n)
     if logical_board.get_node(x, y).value != 'cover':
         return
 
-    visited.add((x, y))
+    visited.add((x, y))     # Add to visited to prevent cycling
 
+    # Update cell based on adjacent mines
     adjacent_mines = minesNextTo(x, y, mines, SIZE)
     logical_board.get_node(x, y).value = str(adjacent_mines) if adjacent_mines > 0 else 'clear'
-    visual_board[x][y] = str(adjacent_mines) if adjacent_mines > 0 else None  # Use 'None' to clear the cell
+    visual_board[x][y] = str(adjacent_mines) if adjacent_mines > 0 else None
 
+    # Recurse for adjacent cells if no adjacent mines
     if adjacent_mines == 0:
         for dx in [-1, 0, 1]:
             for dy in [-1, 0, 1]:
@@ -86,6 +87,15 @@ def clearTiles(x, y, visited=None):     # Average: O(n), Worst: O(n)
                 clearTiles(x + dx, y + dy, visited)
 
 
+# Reveals all mines on the board
+def reveal_mines():     # Average: O(n), Worst: O(n) where n is the number of cells
+    for x in range(SIZE):
+        for y in range(SIZE):
+            if logical_board.get_node(x, y).value == 'mine':
+                visual_board[x][y] = 'mine'
+
+
+# Counts the number of mines next to a specific tile
 def count_adjacent_mines(x, y):     # Average: O(1), Worst: O(1)
     count = 0
     for node in logical_board.get_node(x, y).adjacent:
@@ -94,21 +104,24 @@ def count_adjacent_mines(x, y):     # Average: O(1), Worst: O(1)
     return count
 
 
+# Check if the win condition is met
 def check_win_condition():      # Average: O(n), Worst: O(n)
     if all(node.value != 'cover' for row in logical_board.nodes for node in row if node.value != 'mine'):
         print("Congratulations! You've cleared all mines.")
-        update_scoreboard(SCOREBOARD_PATH, time.time() - start_time)
+        visual_board.close()
+        update_scoreboard(SCOREBOARD_PATH, time.time() - start_time)    # Updates the scoreboard
 
 
+# Updates the scoreboard with new scores
 def update_scoreboard(file_path, new_score):    # Average: O(n log n), Worst: O(n^2)
     try:
         with open(file_path, 'r') as file:
-            scores = [float(line.split(') ')[1]) for line in file if line.strip()]
+            scores = [float(line.split(') ')[1]) for line in file if line.strip()]      # Get scores
     except FileNotFoundError:
-        scores = []
+        scores = []     # New scores list
 
     scores.append(round(float(new_score), 3))
-    ranked_scores = quicksort(scores)
+    ranked_scores = quicksort(scores)       # Sort current scores
 
     with open(file_path, 'w') as file:
         for i, score in enumerate(ranked_scores, start=1):
@@ -117,6 +130,7 @@ def update_scoreboard(file_path, new_score):    # Average: O(n log n), Worst: O(
     print(f"Score saved to {SCOREBOARD_PATH}")
 
 
+# Main function to initialize and start the game
 def main():     # Average: O(n), Worst: O(n) dominated by the reveal_mines or clearTiles
     place_mines()
 
