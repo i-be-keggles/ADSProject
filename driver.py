@@ -22,7 +22,6 @@ start_time = time.time()
 mines = []
 
 
-<<<<<<< HEAD
 def place_mines():  # Average: O(n), Worst: O(n^2)
     global mines
     mines.clear()
@@ -65,75 +64,6 @@ def reveal_mines():     # Average: O(n), Worst: O(n) where n is the number of ce
 def clearTiles(x, y, visited=None):     # Average: O(n), Worst: O(n)
     if visited is None:
         visited = set()
-=======
-#O(1) but may call functions with higher time complexity (eg. checkWin: up to O(n*m+p))
-#user interaction logic
-def handleClick(btn, row, col):
-	#check for blank space
-	if b[row][col] != "cover" and b[row][col] != "flag":
-		return
-	#try clearing
-	if btn == 1 and b[row][col] != "flag":
-		if mineAtLocation(col, row, mines):
-			b[row][col] = "mine"
-			print("You lose!")
-			
-		else:
-			clearTiles(col, row);
-	#flag placement
-	elif btn == 3:
-		#remove flag
-		if b[row][col] == "flag":
-			b[row][col] = "cover"
-			flags.remove(Coords(row,col))
-		#place flag
-		else:
-			if(len(flags) == len(mines)):
-				print("No more flags.")
-				return
-			b[row][col] = "flag"
-			flags.append(Coords(row,col))
-	#check for win
-	if checkWin():
-		print("You win!")
-
-
-#O(n*m) where n,m are dimensions
-#debug function - displays neighbouring mines for each tile
-def generateNumbers():
-	for y in range(0, size):
-		for x in range(0, size):
-			if not mineAtLocation(x,y, mines) and minesNextTo(x,y, mines) != 0:
-				b[y][x] = minesNextTo(x,y, mines, size)
-
-
-#best:O(1), worst:O(n*m+p) where n,m are dimensions, p is flags
-#checks for win condition (all mines must be flagged with no other covered spaces)
-def checkWin():
-	print(len(flags),"out of", len(mines), "flags.")
-	#check if all flags have been placed
-	if len(mines) != len(flags):
-		return False
-	#check if all tiles have been cleared
-	for y in range(0, size):
-		for x in range(0, size):
-			if b[y][x] == "cover":
-				print("Clear all tiles to win.")
-				return False
-	#check that flags are correct
-	for flag in flags:
-		if not mineAtLocation(flag.y, flag.x, mines):
-			return False
-	return True
-
-
-#best:O(1), worst:O(n*m) where n,m are dimensions
-#depth first search floodfill
-def clearTiles(x,y):
-	#base case
-	if x < 0 or y < 0 or x >= size or y >= size or b[y][x] == None:
-		return
->>>>>>> main
 
     if x < 0 or y < 0 or x >= SIZE or y >= SIZE:
         return
@@ -148,18 +78,12 @@ def clearTiles(x,y):
     logical_board.get_node(x, y).value = str(adjacent_mines) if adjacent_mines > 0 else 'clear'
     visual_board[x][y] = str(adjacent_mines) if adjacent_mines > 0 else None  # Use 'None' to clear the cell
 
-<<<<<<< HEAD
     if adjacent_mines == 0:
         for dx in [-1, 0, 1]:
             for dy in [-1, 0, 1]:
                 if dx == 0 and dy == 0:
                     continue
                 clearTiles(x + dx, y + dy, visited)
-=======
-
-#initialise game
-b = Board(size, size)
->>>>>>> main
 
 
 def count_adjacent_mines(x, y):     # Average: O(1), Worst: O(1)
